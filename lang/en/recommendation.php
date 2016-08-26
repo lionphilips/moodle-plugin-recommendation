@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'recommendation';
+$string['modulename'] = 'Recommendation Module';
 $string['modulenameplural'] = 'recommendations';
 $string['modulename_help'] = 'Use the recommendation module for... | The recommendation module allows...';
 $string['recommendation:addinstance'] = 'Add a new recommendation';

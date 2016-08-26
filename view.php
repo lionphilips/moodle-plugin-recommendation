@@ -29,6 +29,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... recommendation instance ID - it should be named as the first character of the module.
@@ -78,6 +79,32 @@ if ($recommendation->intro) {
 
 // Replace the following lines with you own code.
 echo $OUTPUT->heading('Yay! It works!');
+
+
+
+// CODE BEGIN
+
+$users = get_enrolled_users($PAGE->context);
+if(count($users) > 0)
+{
+    echo '<table class="table-striped"><tbody>';
+    foreach ($users as $key => $value) {
+        $events = get_mod_events_by_user($course->id, $value->id);
+        echo '<tr>
+                <td width="10%">'.$value->firstname.'</td>
+                <td>'.json_encode($events).'</td>
+              </tr>';
+    }
+    echo '</tbody></table>';
+}
+else
+{
+    echo '<div class="alert alert-warning"> Nenhum aluno cadastrado </div>';
+}
+
+
+
+
 
 // Finish the page.
 echo $OUTPUT->footer();

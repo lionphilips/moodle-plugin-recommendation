@@ -27,12 +27,36 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/*
- * Does something really useful with the passed things
- *
- * @param array $things
- * @return object
- *function recommendation_do_something_useful(array $things) {
- *    return new stdClass();
- *}
- */
+function get_mod_events_by_user($course, $user)
+{
+	global $DB;
+
+	try {
+		return $DB->get_records_sql("
+			SELECT 
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_forum') AS forum,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_book') AS book,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_chat') AS chat,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_assign') AS assign,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_choice') AS choice,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_data') AS data,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_feedback') AS feedback,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_folder') AS folder,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_glossary') AS glossary,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_lesson') AS lesson,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_page') AS page,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_quiz') AS quiz,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_resource') AS resource,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_scorm') AS scorm,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_survey') AS survey,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_url') AS url,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_wiki') AS wiki,
+				(SELECT COUNT(id) FROM {logstore_standard_log} WHERE courseid=? AND userid=? AND component='mod_workshop') AS workshop
+			", array($course, $user, $course, $user, $course, $user, $course, $user, $course, $user, $course, 
+				$user, $course, $user, $course, $user, $course, $user, $course, $user, $course, $user, $course, 
+				$user, $course, $user, $course, $user, $course, $user, $course, $user, $course, $user, $course, $user)
+		);
+	} catch(Exception $e) {
+
+	}
+}
