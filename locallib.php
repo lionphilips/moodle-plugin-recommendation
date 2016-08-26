@@ -60,3 +60,32 @@ function get_mod_events_by_user($course, $user)
 
 	}
 }
+
+function set_user_resource($recommendation, $user, $module, $total)
+{
+	global $DB;
+
+	try {
+		$recommend = $DB->get_record('recommendation_user_resource', array('recommendation'=>$recommendation, 'module'=>$module, 'user'=>$user));
+
+		if($recommend) {
+			$recommend->total = $total;
+			$recommend->timemodified = time();
+
+			if($DB->update_record('recommendation_user_resource', $recommend)) return true;
+			else return false;
+		} else {
+			$record = new stdClass();
+			$record->recommendation = $recommendation;
+			$record->user = intval($user);
+			$record->module = $module;
+			$record->total = intval($total);
+			$record->timemodified = time();
+			
+			if($DB->insert_record('recommendation_user_resource', $record, false)) return true;
+			else return false;
+		}
+	} catch(Exception $e) {
+		return false;
+	}
+}

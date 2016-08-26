@@ -78,21 +78,71 @@ if ($recommendation->intro) {
 }
 
 // Replace the following lines with you own code.
-echo $OUTPUT->heading('Yay! It works!');
+echo $OUTPUT->heading('Sistema de Recomendação');
+
 
 
 
 // CODE BEGIN
+$users = get_enrolled_users($PAGE->context, 'mod/assignment:submit');
 
-$users = get_enrolled_users($PAGE->context);
+//update values
+foreach ($users as $key => $value) {
+    $events = get_mod_events_by_user($course->id, $value->id);
+
+    foreach ($events as $value2) {
+        foreach ($value2 as $key => $value3) {
+            set_user_resource($id, $value->id, $key, $value3);
+        }
+    }
+}
+
+
 if(count($users) > 0)
 {
-    echo '<table class="table-striped"><tbody>';
+    echo '<p>Módulos utilizados nesta pesquisa (respectivamente):</p>
+            <div class="alert alert-info">
+            forum | book | chat | assign | choice | data | feedback | folder | glossary | lesson
+             | page | quiz | resource | scorm | survey | url | wiki | workshop
+            </div>';
+
+    echo '<table class="table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Aluno</th>
+                    <th class="text-center">Eventos</th>
+                    <th class="text-center">Resultado</th>
+                    <th class="text-center">Média</th>
+                </tr>
+            </thead>
+        <tbody>';
+
     foreach ($users as $key => $value) {
+        $sum = 0; $count = 0;
         $events = get_mod_events_by_user($course->id, $value->id);
-        echo '<tr>
-                <td width="10%">'.$value->firstname.'</td>
-                <td>'.json_encode($events).'</td>
+
+        foreach ($events as $value2) {
+            foreach ($value2 as $value3) { 
+                $sum += intval($value3);
+                $count++;
+            }
+        }
+        
+        $avg = $sum/$count;
+
+        $final = [];
+        foreach ($events as $value2) {
+            foreach ($value2 as $value3) { 
+                if(intval($value3) > $avg) array_push($final, 1);
+                else array_push($final, 0);
+            }
+        }
+            
+        echo '<tr title="'.$value->firstname.'">
+                <td class="text-center"><img src="../../user/pix.php?file=/'.$value->id.'/f3.jpg"/></td>
+                <td class="text-center">'.json_encode($events).'</td>
+                <td class="text-center">'.json_encode($final).'</td>
+                <td class="text-center">'.$avg.'</td>
               </tr>';
     }
     echo '</tbody></table>';
@@ -101,7 +151,6 @@ else
 {
     echo '<div class="alert alert-warning"> Nenhum aluno cadastrado </div>';
 }
-
 
 
 
